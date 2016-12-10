@@ -11752,7 +11752,8 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Titanic dataset</strong></p>
-<p>Research question: Were the wommen and children among three different Pclasses on Titanic be treated equally?</p>
+<p>Research question: Were the wommen and children among three different Pclasses on Titanic be treated equally (same priority to get on a lifeboat)?</p>
+<p>hypotheses: Women and children in third class were not treated equally as those in first or second class.</p>
 <p>We all know that women and children on Titanic had more chance to survive since women and children were given priority to use life boat. However I doubt that women and children among three different Pclasses were treated equally, i.e. they got almost the same chance to survive.</p>
 
 </div>
@@ -11760,18 +11761,19 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#import Pandas and Numpy package</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 <span class="c1">#read titanic-data.csv file, storing in pandas dataframe</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;titanic-data.csv&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="c1">#look at how is the dataset look like</span>
-<span class="n">df</span>
+<span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11782,959 +11784,46 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[1]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>PassengerId</th>
-      <th>Survived</th>
-      <th>Pclass</th>
-      <th>Name</th>
-      <th>Sex</th>
-      <th>Age</th>
-      <th>SibSp</th>
-      <th>Parch</th>
-      <th>Ticket</th>
-      <th>Fare</th>
-      <th>Cabin</th>
-      <th>Embarked</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Braund, Mr. Owen Harris</td>
-      <td>male</td>
-      <td>22.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>A/5 21171</td>
-      <td>7.2500</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
-      <td>female</td>
-      <td>38.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>PC 17599</td>
-      <td>71.2833</td>
-      <td>C85</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Heikkinen, Miss. Laina</td>
-      <td>female</td>
-      <td>26.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>STON/O2. 3101282</td>
-      <td>7.9250</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>4</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
-      <td>female</td>
-      <td>35.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>113803</td>
-      <td>53.1000</td>
-      <td>C123</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Allen, Mr. William Henry</td>
-      <td>male</td>
-      <td>35.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>373450</td>
-      <td>8.0500</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>6</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Moran, Mr. James</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>330877</td>
-      <td>8.4583</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>7</td>
-      <td>0</td>
-      <td>1</td>
-      <td>McCarthy, Mr. Timothy J</td>
-      <td>male</td>
-      <td>54.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>17463</td>
-      <td>51.8625</td>
-      <td>E46</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>8</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Palsson, Master. Gosta Leonard</td>
-      <td>male</td>
-      <td>2.0</td>
-      <td>3</td>
-      <td>1</td>
-      <td>349909</td>
-      <td>21.0750</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>9</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Johnson, Mrs. Oscar W (Elisabeth Vilhelmina Berg)</td>
-      <td>female</td>
-      <td>27.0</td>
-      <td>0</td>
-      <td>2</td>
-      <td>347742</td>
-      <td>11.1333</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>10</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Nasser, Mrs. Nicholas (Adele Achem)</td>
-      <td>female</td>
-      <td>14.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>237736</td>
-      <td>30.0708</td>
-      <td>NaN</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>11</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Sandstrom, Miss. Marguerite Rut</td>
-      <td>female</td>
-      <td>4.0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>PP 9549</td>
-      <td>16.7000</td>
-      <td>G6</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>12</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Bonnell, Miss. Elizabeth</td>
-      <td>female</td>
-      <td>58.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>113783</td>
-      <td>26.5500</td>
-      <td>C103</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>13</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Saundercock, Mr. William Henry</td>
-      <td>male</td>
-      <td>20.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>A/5. 2151</td>
-      <td>8.0500</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>14</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Andersson, Mr. Anders Johan</td>
-      <td>male</td>
-      <td>39.0</td>
-      <td>1</td>
-      <td>5</td>
-      <td>347082</td>
-      <td>31.2750</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>15</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Vestrom, Miss. Hulda Amanda Adolfina</td>
-      <td>female</td>
-      <td>14.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>350406</td>
-      <td>7.8542</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>16</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Hewlett, Mrs. (Mary D Kingcome)</td>
-      <td>female</td>
-      <td>55.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>248706</td>
-      <td>16.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>17</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Rice, Master. Eugene</td>
-      <td>male</td>
-      <td>2.0</td>
-      <td>4</td>
-      <td>1</td>
-      <td>382652</td>
-      <td>29.1250</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>18</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Williams, Mr. Charles Eugene</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>244373</td>
-      <td>13.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>19</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Vander Planke, Mrs. Julius (Emelia Maria Vande...</td>
-      <td>female</td>
-      <td>31.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>345763</td>
-      <td>18.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>20</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Masselmani, Mrs. Fatima</td>
-      <td>female</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>2649</td>
-      <td>7.2250</td>
-      <td>NaN</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>21</td>
-      <td>0</td>
-      <td>2</td>
-      <td>Fynney, Mr. Joseph J</td>
-      <td>male</td>
-      <td>35.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>239865</td>
-      <td>26.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>22</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Beesley, Mr. Lawrence</td>
-      <td>male</td>
-      <td>34.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>248698</td>
-      <td>13.0000</td>
-      <td>D56</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>23</td>
-      <td>1</td>
-      <td>3</td>
-      <td>McGowan, Miss. Anna "Annie"</td>
-      <td>female</td>
-      <td>15.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>330923</td>
-      <td>8.0292</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>24</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Sloper, Mr. William Thompson</td>
-      <td>male</td>
-      <td>28.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>113788</td>
-      <td>35.5000</td>
-      <td>A6</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>25</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Palsson, Miss. Torborg Danira</td>
-      <td>female</td>
-      <td>8.0</td>
-      <td>3</td>
-      <td>1</td>
-      <td>349909</td>
-      <td>21.0750</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>26</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Asplund, Mrs. Carl Oscar (Selma Augusta Emilia...</td>
-      <td>female</td>
-      <td>38.0</td>
-      <td>1</td>
-      <td>5</td>
-      <td>347077</td>
-      <td>31.3875</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>27</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Emir, Mr. Farred Chehab</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>2631</td>
-      <td>7.2250</td>
-      <td>NaN</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>28</td>
-      <td>0</td>
-      <td>1</td>
-      <td>Fortune, Mr. Charles Alexander</td>
-      <td>male</td>
-      <td>19.0</td>
-      <td>3</td>
-      <td>2</td>
-      <td>19950</td>
-      <td>263.0000</td>
-      <td>C23 C25 C27</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>29</td>
-      <td>1</td>
-      <td>3</td>
-      <td>O'Dwyer, Miss. Ellen "Nellie"</td>
-      <td>female</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>330959</td>
-      <td>7.8792</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>30</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Todoroff, Mr. Lalio</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>349216</td>
-      <td>7.8958</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>861</th>
-      <td>862</td>
-      <td>0</td>
-      <td>2</td>
-      <td>Giles, Mr. Frederick Edward</td>
-      <td>male</td>
-      <td>21.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>28134</td>
-      <td>11.5000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>862</th>
-      <td>863</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Swift, Mrs. Frederick Joel (Margaret Welles Ba...</td>
-      <td>female</td>
-      <td>48.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>17466</td>
-      <td>25.9292</td>
-      <td>D17</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>863</th>
-      <td>864</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Sage, Miss. Dorothy Edith "Dolly"</td>
-      <td>female</td>
-      <td>NaN</td>
-      <td>8</td>
-      <td>2</td>
-      <td>CA. 2343</td>
-      <td>69.5500</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>864</th>
-      <td>865</td>
-      <td>0</td>
-      <td>2</td>
-      <td>Gill, Mr. John William</td>
-      <td>male</td>
-      <td>24.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>233866</td>
-      <td>13.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>865</th>
-      <td>866</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Bystrom, Mrs. (Karolina)</td>
-      <td>female</td>
-      <td>42.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>236852</td>
-      <td>13.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>866</th>
-      <td>867</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Duran y More, Miss. Asuncion</td>
-      <td>female</td>
-      <td>27.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>SC/PARIS 2149</td>
-      <td>13.8583</td>
-      <td>NaN</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>867</th>
-      <td>868</td>
-      <td>0</td>
-      <td>1</td>
-      <td>Roebling, Mr. Washington Augustus II</td>
-      <td>male</td>
-      <td>31.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>PC 17590</td>
-      <td>50.4958</td>
-      <td>A24</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>868</th>
-      <td>869</td>
-      <td>0</td>
-      <td>3</td>
-      <td>van Melkebeke, Mr. Philemon</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>345777</td>
-      <td>9.5000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>869</th>
-      <td>870</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Johnson, Master. Harold Theodor</td>
-      <td>male</td>
-      <td>4.0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>347742</td>
-      <td>11.1333</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>870</th>
-      <td>871</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Balkic, Mr. Cerin</td>
-      <td>male</td>
-      <td>26.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>349248</td>
-      <td>7.8958</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>871</th>
-      <td>872</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Beckwith, Mrs. Richard Leonard (Sallie Monypeny)</td>
-      <td>female</td>
-      <td>47.0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>11751</td>
-      <td>52.5542</td>
-      <td>D35</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>872</th>
-      <td>873</td>
-      <td>0</td>
-      <td>1</td>
-      <td>Carlsson, Mr. Frans Olof</td>
-      <td>male</td>
-      <td>33.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>695</td>
-      <td>5.0000</td>
-      <td>B51 B53 B55</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>873</th>
-      <td>874</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Vander Cruyssen, Mr. Victor</td>
-      <td>male</td>
-      <td>47.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>345765</td>
-      <td>9.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>874</th>
-      <td>875</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Abelson, Mrs. Samuel (Hannah Wizosky)</td>
-      <td>female</td>
-      <td>28.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>P/PP 3381</td>
-      <td>24.0000</td>
-      <td>NaN</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>875</th>
-      <td>876</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Najib, Miss. Adele Kiamie "Jane"</td>
-      <td>female</td>
-      <td>15.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>2667</td>
-      <td>7.2250</td>
-      <td>NaN</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>876</th>
-      <td>877</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Gustafsson, Mr. Alfred Ossian</td>
-      <td>male</td>
-      <td>20.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>7534</td>
-      <td>9.8458</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>877</th>
-      <td>878</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Petroff, Mr. Nedelio</td>
-      <td>male</td>
-      <td>19.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>349212</td>
-      <td>7.8958</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>878</th>
-      <td>879</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Laleff, Mr. Kristo</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>349217</td>
-      <td>7.8958</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>879</th>
-      <td>880</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Potter, Mrs. Thomas Jr (Lily Alexenia Wilson)</td>
-      <td>female</td>
-      <td>56.0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>11767</td>
-      <td>83.1583</td>
-      <td>C50</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>880</th>
-      <td>881</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Shelley, Mrs. William (Imanita Parrish Hall)</td>
-      <td>female</td>
-      <td>25.0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>230433</td>
-      <td>26.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>881</th>
-      <td>882</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Markun, Mr. Johann</td>
-      <td>male</td>
-      <td>33.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>349257</td>
-      <td>7.8958</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>882</th>
-      <td>883</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Dahlberg, Miss. Gerda Ulrika</td>
-      <td>female</td>
-      <td>22.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>7552</td>
-      <td>10.5167</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>883</th>
-      <td>884</td>
-      <td>0</td>
-      <td>2</td>
-      <td>Banfield, Mr. Frederick James</td>
-      <td>male</td>
-      <td>28.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>C.A./SOTON 34068</td>
-      <td>10.5000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>884</th>
-      <td>885</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Sutehall, Mr. Henry Jr</td>
-      <td>male</td>
-      <td>25.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>SOTON/OQ 392076</td>
-      <td>7.0500</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>885</th>
-      <td>886</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Rice, Mrs. William (Margaret Norton)</td>
-      <td>female</td>
-      <td>39.0</td>
-      <td>0</td>
-      <td>5</td>
-      <td>382652</td>
-      <td>29.1250</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-    <tr>
-      <th>886</th>
-      <td>887</td>
-      <td>0</td>
-      <td>2</td>
-      <td>Montvila, Rev. Juozas</td>
-      <td>male</td>
-      <td>27.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>211536</td>
-      <td>13.0000</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>887</th>
-      <td>888</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Graham, Miss. Margaret Edith</td>
-      <td>female</td>
-      <td>19.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>112053</td>
-      <td>30.0000</td>
-      <td>B42</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>888</th>
-      <td>889</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Johnston, Miss. Catherine Helen "Carrie"</td>
-      <td>female</td>
-      <td>NaN</td>
-      <td>1</td>
-      <td>2</td>
-      <td>W./C. 6607</td>
-      <td>23.4500</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>889</th>
-      <td>890</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Behr, Mr. Karl Howell</td>
-      <td>male</td>
-      <td>26.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>111369</td>
-      <td>30.0000</td>
-      <td>C148</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>890</th>
-      <td>891</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Dooley, Mr. Patrick</td>
-      <td>male</td>
-      <td>32.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>370376</td>
-      <td>7.7500</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-  </tbody>
-</table>
-<p>891 rows × 12 columns</p>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 891 entries, 0 to 890
+Data columns (total 12 columns):
+PassengerId    891 non-null int64
+Survived       891 non-null int64
+Pclass         891 non-null int64
+Name           891 non-null object
+Sex            891 non-null object
+Age            714 non-null float64
+SibSp          891 non-null int64
+Parch          891 non-null int64
+Ticket         891 non-null object
+Fare           891 non-null float64
+Cabin          204 non-null object
+Embarked       889 non-null object
+dtypes: float64(2), int64(5), object(5)
+memory usage: 83.6+ KB
+</pre>
 </div>
-</div>
-
 </div>
 
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we have imported the packages and read in the CSV file. Let's look at the general information of the data. The dataset includes 891 observations of 12 variables. Some variables (columns) contains missing values. For example, there are 177 missing values in "Age" column.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#Look at the overall survival situation of female among three Pclasses</span>
@@ -12750,7 +11839,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[52]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[60]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -13147,14 +12236,15 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After looking at the overall survival situation of female among three classes above, it seems the results meet my expectation. Now I want to explore the situation of each Pclass separately.</p>
+<p>Then we create a new dataframe object (df_female) to store all the female obsevations which only includes three variables, "Sex", "Pclass", "Survived".</p>
+<p>After looking at the overall survival situation of female among three classes above, it seems the results may meet my expectation. Now I want to dive into the observations of each Pclass separately.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#look at the survival situation of female in first class</span>
@@ -13170,7 +12260,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[39]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[61]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -13191,13 +12281,23 @@ Name: Survived, dtype: float64</pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We create a new dataframe object (df_female_first_class) to store all the female observations from "first class". we can see that there 94 females in first class.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#display as bar chart </span>
-<span class="n">df_female_first_class</span><span class="p">[</span><span class="s1">&#39;Survived&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="n">df_female_first_class</span><span class="p">[</span><span class="s1">&#39;Survived&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13208,102 +12308,11 @@ Name: Survived, dtype: float64</pre>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[40]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[62]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116fa5250&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116770ed0&gt;</pre>
 </div>
 
 </div>
@@ -13311,10 +12320,20 @@ sBEFAEAlCgCAjSgAACpRAABsRAEAUIkCAGAjCgCAqv4fcBZoC/22emUAAAAASUVORK5CYII=
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the bar chart above we can see that most females in first class survived.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[63]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">##look at the survival situation of female in second class</span>
@@ -13330,7 +12349,7 @@ sBEFAEAlCgCAjSgAACpRAABsRAEAUIkCAGAjCgCAqv4fcBZoC/22emUAAAAASUVORK5CYII=
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[41]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[63]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -13351,9 +12370,19 @@ Name: Survived, dtype: float64</pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We create a new dataframe object (df_female_second_class) to store all the female observations from "second class". we can see that there 76 females in second class.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#display as bar chart</span>
@@ -13368,112 +12397,11 @@ Name: Survived, dtype: float64</pre>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[42]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[64]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116450350&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116770ed0&gt;</pre>
 </div>
 
 </div>
@@ -13481,10 +12409,20 @@ Bl+SpAIMviRJBRh8SZIKMPiSJBVg8CVJKsDgS5JUwP8BVE30xBHU+3cAAAAASUVORK5CYII=
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the bar chart above we can see that most females in second class survived.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[65]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">##look at the survival situation of female in third class</span>
@@ -13500,7 +12438,7 @@ Bl+SpAIMviRJBRh8SZIKMPiSJBVg8CVJKsDgS5JUwP8BVE30xBHU+3cAAAAASUVORK5CYII=
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[65]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -13521,13 +12459,23 @@ Name: Survived, dtype: float64</pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We create a new dataframe object (df_female_third_class) to store all the female observations from "third class". we can see that there 144 females in third class.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="prompt input_prompt">In&nbsp;[66]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#display as bar chart</span>
-<span class="n">df_female_third_class</span><span class="p">[</span><span class="s1">&#39;Survived&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="n">df_female_third_class</span><span class="p">[</span><span class="s1">&#39;Survived&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Survival situation of third-class women&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13538,119 +12486,11 @@ Name: Survived, dtype: float64</pre>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[51]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[66]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1174fff50&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116770ed0&gt;</pre>
 </div>
 
 </div>
@@ -13664,19 +12504,39 @@ JDXA4EuS1ACDL0lSAwy+JEkN+H87LYfuQHS4FQAAAABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the data analysis above, the survival rate of female in first Pclass is 96.8%; the survival rate of female in second Pclass is 92.1%；the survival rate of female in third Pclass is 50%. There is significant difference between them, so we can say women among three different Pclasses on Titanic were not treated equally.</p>
-<p>Now we use similar strategy to investigate the situation of children. We assume children's age are between 0 to 14.</p>
+<p>From the bar chart above we can see that only half of the females in third class survived.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the data analysis above, the survival rate of female in first Pclass is 96.8%; the survival rate of female in second Pclass is 92.1%；the survival rate of female in third Pclass is 50%. There is significant difference between them. But do this mean that wealthy were put on the lifeboat first? Not necessarily! Maybe the cabins of third class were at more bottom of Titanic, so females of third class were more easily flooded by water and needed more time to get to the deck. Since 687 values in "Cabin" column are missing, we'll stop here.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let's investigate the situation of children. We assume children's age are between 0 to 14.</p>
+<p>Since we need accurate "Age" value to avoid bias in this investigation, we'll drop all the observations without age information.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[85]:</div>
+<div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># drop the data without age information</span>
-<span class="n">df_first_class</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">][[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span><span class="s1">&#39;Survived&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df_first_class</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">][[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Survived&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
 <span class="c1">#look at the survival situation of chidren(age:0-14) in first class</span>
 <span class="n">df_children_first_class</span> <span class="o">=</span> <span class="n">df_first_class</span><span class="p">[</span><span class="n">df_first_class</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">14.0</span><span class="p">][[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Survived&#39;</span><span class="p">]]</span>
@@ -13691,7 +12551,7 @@ JDXA4EuS1ACDL0lSAwy+JEkN+H87LYfuQHS4FQAAAABJRU5ErkJggg==
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[85]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[67]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -13755,9 +12615,19 @@ JDXA4EuS1ACDL0lSAwy+JEkN+H87LYfuQHS4FQAAAABJRU5ErkJggg==
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After dropping observations of first class that without age information, we can see there are 4 children in first class. And the mean of variable "Survived" is '0.75'.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[98]:</div>
+<div class="prompt input_prompt">In&nbsp;[68]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#display as pie chart</span>
@@ -13772,217 +12642,11 @@ JDXA4EuS1ACDL0lSAwy+JEkN+H87LYfuQHS4FQAAAABJRU5ErkJggg==
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[98]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[68]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x1194132d0&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-A6RZEPe6lZQUAAAAAElFTkSuQmCC
-"
->
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116770ed0&gt;</pre>
 </div>
 
 </div>
@@ -13990,10 +12654,20 @@ A6RZEPe6lZQUAAAAAElFTkSuQmCC
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the pie chart, we can see the rate of survial of first-class children is 75%. However, the size is too small, so the results may be largely biased.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[89]:</div>
+<div class="prompt input_prompt">In&nbsp;[69]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">df_second_class</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">2</span><span class="p">][[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span><span class="s1">&#39;Survived&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -14011,7 +12685,7 @@ A6RZEPe6lZQUAAAAAElFTkSuQmCC
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[89]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[69]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -14075,9 +12749,19 @@ A6RZEPe6lZQUAAAAAElFTkSuQmCC
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After dropping observations of second class that without age information, we can see there are 18 children in second class. And the mean of variable "Survived" is '1'.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[99]:</div>
+<div class="prompt input_prompt">In&nbsp;[70]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#display as pie chart</span>
@@ -14092,210 +12776,11 @@ A6RZEPe6lZQUAAAAAElFTkSuQmCC
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[99]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[70]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x117c24b10&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-iIgU1P8Hc38Mje2LXbQAAAAASUVORK5CYII=
-"
->
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116770ed0&gt;</pre>
 </div>
 
 </div>
@@ -14303,10 +12788,20 @@ iIgU1P8Hc38Mje2LXbQAAAAASUVORK5CYII=
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the pie chart, we can see the rate of survial of second-class children is 100%. All of the children in this class survived!</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[91]:</div>
+<div class="prompt input_prompt">In&nbsp;[71]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">df_third_class</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">3</span><span class="p">][[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span><span class="s1">&#39;Survived&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -14324,7 +12819,7 @@ iIgU1P8Hc38Mje2LXbQAAAAASUVORK5CYII=
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[91]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[71]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -14388,9 +12883,19 @@ iIgU1P8Hc38Mje2LXbQAAAAASUVORK5CYII=
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After dropping observations of third class that without age information, we can see there are 49 children in third class. And the mean of variable "Survived" is less than '0.5'.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[97]:</div>
+<div class="prompt input_prompt">In&nbsp;[72]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#display as pie chart</span>
@@ -14405,231 +12910,11 @@ iIgU1P8Hc38Mje2LXbQAAAAASUVORK5CYII=
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[97]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[72]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x11a138150&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-/w9nM0UCmleCTwAAAABJRU5ErkJggg==
-"
->
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x116770ed0&gt;</pre>
 </div>
 
 </div>
@@ -14643,7 +12928,167 @@ JS8iIlJQKnkREZGCUsmLiIgUlEpeRESkoFTyIiIiBaWSFxERKSiVvIiISEGp5EVERApKJS8iIlJQ
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As we can see above, the survival rate of children in third class was significantly lower than those in first and second class. Therefore, we can also say that children among three different classes on Titanic were not treated equally. All in all, it was a sad story.</p>
+<p>From the pie chart, we can see that less than half of the children in third class survived.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see above, the survival rate of children in third class was significantly lower than those in first and second class. However, is it safe to say that children in third class were not treated equally as those in first or second class? No, I was wondering that maybe children in third class had more siblings and because of that, their parents had more difficulty to take care of all their children. In contrast, maybe children in first or second class had fewer siblings, so it is easier for their parents to take care of them. Let's figure it out!!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#create a new dataframe which includes four variables from original dataset, and drop the observations without age </span>
+<span class="c1">#information</span>
+<span class="n">df_new</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Pclass&#39;</span><span class="p">,</span> <span class="s1">&#39;SibSp&#39;</span><span class="p">,</span> <span class="s1">&#39;Survived&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df_new</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Int64Index: 714 entries, 0 to 890
+Data columns (total 4 columns):
+Age         714 non-null float64
+Pclass      714 non-null int64
+SibSp       714 non-null int64
+Survived    714 non-null int64
+dtypes: float64(1), int64(3)
+memory usage: 27.9 KB
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we hava a new dataset including 4 columns and 714 observations without NA values. Also, we assume all the children under 14 have no spouse. Therefor the 'SibSp' value is equal to the number of each child's siblings.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[74]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#create an object to store &#39;SibSp&#39; value of each child in first class</span>
+<span class="n">df_sib_first_class_children</span> <span class="o">=</span> <span class="n">df_new</span><span class="p">[(</span><span class="n">df_new</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span> <span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_new</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">14.0</span><span class="p">)][</span><span class="s1">&#39;SibSp&#39;</span><span class="p">]</span>
+<span class="n">df_sib_first_class_children</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[74]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>count    4.00
+mean     0.75
+std      0.50
+min      0.00
+25%      0.75
+50%      1.00
+75%      1.00
+max      1.00
+Name: SibSp, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As the statistic show, on average, each child in second class had fewer than 1 sibling.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[75]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#create an object to store &#39;SibSp&#39; value of each child in third class</span>
+<span class="n">df_sib_third_class_children</span> <span class="o">=</span> <span class="n">df_new</span><span class="p">[(</span><span class="n">df_new</span><span class="p">[</span><span class="s1">&#39;Pclass&#39;</span><span class="p">]</span> <span class="o">==</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_new</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">14.0</span><span class="p">)][</span><span class="s1">&#39;SibSp&#39;</span><span class="p">]</span>
+<span class="n">df_sib_third_class_children</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[75]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>count    49.000000
+mean      2.285714
+std       1.744037
+min       0.000000
+25%       1.000000
+50%       3.000000
+75%       4.000000
+max       5.000000
+Name: SibSp, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Comparing to first and second class, the children in third class often had more siblings on Titanic. On average they had more than two siblings. This maybe one of the factors that influenced the relatively low survial rate of third-class children.</p>
+<p><strong>Conclusion</strong>:</p>
+<p>I started to explore the dataset with a hypotheses that women and children in third class were not treated equally as those in first or second class. Fisrt, I investigated the survial rate of women in each class and found the surival rate of third-class (50.0%) women were significant lower than those in first (96.8%) and second class (92.1%). Then I investigated the survial rate of children (age &lt; 14) in each class and the data told us the survival rate of third-class children (42.9%) were significant lower than those in first (75%) and second class (100%).</p>
+<p>However, it is not safe to accept our hypotheses, becasue there might be other factors that casue such results. One guess is the cabins of third class were at more bottom of Titanic, so peopel of third class were more easily flooded by water and needed more time to get to the deck. Since 687 values in "Cabin" column are missing, I stoped further investigation. Another guess is that maybe children in third class had more siblings and because of that, their parents had more difficulty to take care of all their children. So I did further investigation from this perspective and found that on average, each child in third class had more than two siblings while child in other classed only had less than one sibling. So it is possible the number of children's sibling is a factor that influences children's survial rate.</p>
+<p>There is also limitation in this study. For example, although I investigated the number of children's sliblings, but I did not investigate the number of children's parents. Although third-class children had more siblings, but we don't know if they also had more parents on Titanic. Also, based on this dataset, we cannot get the infomation about the sex of children's parents. Having father or mother or both on Titanic may make a difference to children's survival rate.</p>
 
 </div>
 </div>
