@@ -221,7 +221,7 @@ I notice there are some tags in which the key is "FIXME", and the value of such 
   ```
 
 
-The 'value' of 'FIXME' tags should provide some useful information for later contributors, however, looking at the top five values and their counts, they are probably generated automatically by bots and the information they provided may be misleading. To facilitate collaboration among contributors, the community of Openstreetmap should set certain rules, for example: 1. try to edit the value manually and explain the problem clearly; 2. if you cannot make the First rule and want to generate by bots, please use default value,like '0', in order to avoid misleading.
+The 'value' of 'FIXME' tags should provide some useful information for later contributors, however, looking at the top five values and their counts, they are probably generated automatically by bots and the information they provided may be misleading. To facilitate collaboration among contributors, the community of Openstreetmap should set certain rules, for example: 1. try to edit the value manually and explain the problem clearly; 2. if you cannot make the First rule and want to generate by bots, please set a shared default value for '"key = FIXME", like '0', in order to avoid misleading.  However, there might be some potential issues arising from the implementation of this solution. For example, most of the major contributors are probably programmers and they tend to do things programmatically and automatically, therefore the requirement of editing some value manually might discouraging them from contributing.
 
 ### References:
 
