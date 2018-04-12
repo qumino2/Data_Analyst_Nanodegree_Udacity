@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+
+      <script src="d3.js"></script>
+
+   </head>
+   <body>
+     <script>
+        var width = 500,
+            height = 500,
+            padding = 50;
+
+
+        d3.csv("ages.csv", function(data) {
+
+          var map = data.map(function(i) { return
+          parseInt(i.age);})
+
+          var histogram = d3.layout.histogram()
+              .bins(5)
+              (map)
+
+          var y = d3.scale.linear()
+              .domain([0, d3.max(histogram.map(function
+              (i) { return i.length;}))])
+              .range([0, height])
+
+          var x = d3.scale.linear()
+              .domain([0, d3.max(map)])
+              .range([0, width])
+
+          var xAxis = d3.svg.axis()
+              .scale(x)
+              .orient("bottom");
+
+
+          var canvas = d3.select("body").append("svg")
+              .attr("width", width)
+              .attr("height", height + padding);
+
+          var group = canvas.append("g")
+              .attr("transform", "tranlate(0, "+ height +")")
+              .call(xAxis);
+
+          var bars = canvas.selectAll(".bar")
+              .data(histogram)
+              .enter()
+              .append("g")
+
+          bars.append("rect")
+              .attr("x", function(d) { return x(d.x); })
+
+              .attr("y", function(d) { return y(d.y); })
+
+              .attr("withd", function(d) { return x(d.dx); })
+              .attr("height", function(d) { return y(d.y); })
+              .attr("fill", "steelblue")
+
+        })
+          
+
+     </script>
+
+
+
+
+
+
+
+
+   </body>
+</html>
