@@ -16,7 +16,7 @@
       }
     </style>
     <script type="text/javascript">
-
+      // draw function to draw the map chart
       function draw(geo_data) {
         "use strict";
 
@@ -27,6 +27,7 @@
             width = 1400 - margin,
             height = 600 - margin;
 
+        // append svg element of map to the page
         var svg = d3.select("body")
             .append("svg")
             .attr("width", width + margin)
@@ -34,8 +35,127 @@
             .append('g')
             .attr('class', 'map');
 
+        //set mercator projection for the map
+        var projection = d3.geo.mercator()
+                               .scale(140)
+                               .translate([width / 2, height / 1.2]);
+
+        var path = d3.geo.path().projection(projection);
+
+        var map = svg.selectAll('path')
+                     .data(geo_data.features)
+                     .enter()
+                     .append('path')
+                     .attr('d', path)
+                     .style('fill', 'lightBlue')
+                     .style('stroke', 'black')
+                     .style('stroke-width', 0.5);
+
+
+
         var districts = ["Small Town", "City", "Village", "Town", "Large City"]
 
+        //run animation of author-driven results
+        author_driven_results(0)
+        var i = 1;
+        var author = setInterval(function(){
+            author_driven_results(i);
+            i++;
+
+            if (i >= 5){
+              clearInterval(author)
+            };
+
+          }, 4000);
+
+
+         // define function to display author driven results
+        function author_driven_results(i){
+
+          d3.select("h2")
+
+            .text("The Number of Schools from " + districts[i] + " in each country Participated in PISA in 2012 ")
+            .style("color", "lightBlue");
+
+
+          var index = i;
+          d3.csv("./data/school_2012.csv", plot_points);
+
+          //the logic of drawing circles
+          function plot_points(data) {
+
+              d3.selectAll('circle').remove();
+
+              //use D3 nest and rollup function to group data and perform two-level aggregation
+              var nested = d3.nest()
+                             .key(function(d) {
+                               return d.School_Location;
+
+                             })
+                             .key(function(d) {
+                               return d.NC;
+                             })
+                             .rollup(function(leaves) {
+
+                               // get the coordinate data for each country
+                               var coords = leaves.map(function(d) {
+                                   return projection([+d.long, +d.lat]);
+                               });
+
+                               var center_x = d3.mean(coords, function(d) {
+                                   return d[0];
+
+                               });
+
+                               var center_y =d3.mean(coords, function(d) {
+                                     return d[1];
+                               });
+
+
+                               return {
+
+                               'the number of school': leaves.length,
+                               'x': center_x,
+                               'y': center_y
+                              };
+
+                            })
+
+                             .entries(data);
+
+                             // define the radius of the circles
+                             var school_extent = d3.extent(nested[index].values, function(d) {
+                                 return d.values['the number of school'];
+                             });
+
+                             var radius = d3.scale.sqrt()
+                                            .domain(school_extent)
+                                            .range([0,12]);
+
+                            //append circles to the page
+                            svg.append('g')
+                               .attr("class", "bubble")
+                               .selectAll("circle")
+                               .data(nested[index].values.sort(function(a,b) {
+                                   return b.values['the number of school'] - a.values['the number of school'];
+                               }))
+                               .enter()
+                               .append("circle")
+                               .attr('cx', function(d) {return d.values["x"];})
+                               .attr('cy', function(d) {return d.values["y"];})
+                               .attr('r', function(d) {return radius(d.values['the number of school'])})
+                               .attr('fill', 'rgb(247, 148, 32)')
+                               .attr('stroke', 'black')
+                               .attr('stroke-width', 0.7)
+                               .attr('opacity', 0.7)
+
+
+          };
+
+        };
+
+
+        // add buttons to the page
         var buttons = d3.select("body")
                         .append("div")
                         .attr("class", "districts_buttons")
@@ -46,6 +166,8 @@
                         .text(function(d) {
                             return d;
                         });
+
+        // adding events to buttons
         buttons.on("click", function(d) {
             d3.select(".districts_buttons")
               .selectAll("div")
@@ -63,18 +185,21 @@
 
             update(d);
 
+            //update title, data and visualization when readers click any button
             function update (d) {
               d3.select("h2")
-                .text("The number of schools from " + d + " participated in PISA in 2012 ")
+                .text("The Number of Schools from " + d + " in each country Participated in PISA in 2012 ")
                 .style("color", "lightBlue");
 
               var index = districts.indexOf(d);
               d3.csv("./data/school_2012.csv", plot_points);
-              function plot_points(data) {
-                  //draw circles logic
 
+              //the logic of drawing circles
+              function plot_points(data) {
 
                   d3.selectAll('circle').remove();
+
+                  //use D3 nest and rollup function to group data and perform two-level aggregation
                   var nested = d3.nest()
                                  .key(function(d) {
                                    return d.School_Location;
@@ -85,6 +210,7 @@
                                  })
                                  .rollup(function(leaves) {
 
+                                   // get the coordinate data for each country
                                    var coords = leaves.map(function(d) {
                                        return projection([+d.long, +d.lat]);
                                    });
@@ -110,6 +236,7 @@
 
                                  .entries(data);
 
+                                 // define the radius of the circles
                                  var school_extent = d3.extent(nested[index].values, function(d) {
                                      return d.values['the number of school'];
                                  });
@@ -118,7 +245,7 @@
                                                 .domain(school_extent)
                                                 .range([0,12]);
 
-
+                                //append circles to the page
                                 svg.append('g')
                                    .attr("class", "bubble")
                                    .selectAll("circle")
@@ -137,7 +264,9 @@
                                    .on("mouseover", handleMouseOver)
                                    .on("mouseout", handleMouseOut);
 
+
                                 function handleMouseOver(d){
+                                  // the logic of readers' mouseover events
                                   d3.select(this).attr({
                                     fill: "red",
 
@@ -151,13 +280,13 @@
                                   .text(function(){return  d.key + ':' + d.values['the number of school'];});
                               }
 
-                              function handleMouseOut(d){
-                                d3.select(this).attr({
-                                  fill: "rgb(247, 148, 32)",
-                                });
+                                function handleMouseOut(d){
+                                  d3.select(this).attr({
+                                    fill: "rgb(247, 148, 32)",
+                                  });
 
-                                d3.select('text').remove();
-                              }
+                                  d3.select('text').remove();
+                              };
 
               };
 
@@ -165,30 +294,14 @@
 
         });
 
-        var projection = d3.geo.mercator()
-                               .scale(140)
-                               .translate([width / 2, height / 1.2]);
-
-        var path = d3.geo.path().projection(projection);
-
-        var map = svg.selectAll('path')
-                     .data(geo_data.features)
-                     .enter()
-                     .append('path')
-                     .attr('d', path)
-                     .style('fill', 'lightBlue')
-                     .style('stroke', 'black')
-                     .style('stroke-width', 0.5);
 
       };
       </script>
   </head>
 <body>
   <script type="text/javascript">
-  /*
-    Use D3 to load the GeoJSON file
-    */
 
+    // Use D3 to load the GeoJSON file
     d3.json("./data/world_countries.json", draw);
   </script>
 </body>
