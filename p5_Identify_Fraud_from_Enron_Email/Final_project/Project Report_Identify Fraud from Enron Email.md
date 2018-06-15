@@ -47,31 +47,42 @@ From the exploratory data analysis, 3 entries need to be removed:
 
 We have an intuition that persons of interest might have stronger email connection between each other than the general population, therefore new features `ratio_from_poi` and`ratio_to_poi` (messages from/to the POI divided by to/from messages from the person) were added. 
 
-I have used SelectKBest to conduct the feature selection, the selected top 5 best (k=5) features are as shown below:
+I have used `SelectKBest` to conduct the feature selection, the parameter used was K= 10 and top 10 influential features were selected and used for the classifiers I used later because when I tested K= 5, 6, 8, the precision of DecisionTreeClassifier drops with precision of other classifiers remain relatively unchanged. The
 
-**K-best features: [('exercised_stock_options', 24.815079733218194), ('total_stock_value', 24.182898678566872), ('bonus', 20.792252047181538), ('salary', 18.289684043404513), ('fraction_to_poi', 16.40971254803579)]**
+Scaling has been done by using MinMax scaling, since the unit and range of the features are different. The scores of selected features are as follows:
 
-Scaling has been done by using MinMax scaling, since the unit and range of the features are different.
+| Selected Features       | Score  |
+| ----------------------- | ------ |
+| exercised_stock_options | 22.510 |
+| total_stock_value       | 22.349 |
+| bonus                   | 20.792 |
+| salary                  | 18.289 |
+| deferred_income         | 11.425 |
+| long_term_incentive     | 9.922  |
+| restricted_stock        | 9.284  |
+| total_payments          | 8.772  |
+| shared_receipt_with_poi | 8.589  |
+| loan_advances           | 7.184  |
 
 ##### 3. What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?  
 
-Three classifiers have been tested, namely, GaussianNB, Decision Tree, and K Nearest Neighbors. Please see the results below:
+Three classifiers have been tested, namely, GaussianNB, Decision Tree, and K Nearest Neighbors. Please see the results below without tuning:
 
 **KNeighborsClassifier:**
 
-    Accuracy: 0.86380	Precision: 0.23457	Recall: 0.00950	F1: 0.01826	F2: 0.01176
-    Total predictions: 15000	True positives:   19	False positives:   62	False negatives: 1981	True negatives: 12938
+    Accuracy: 0.87640	Precision: 0.63878	Recall: 0.16800	F1: 0.26603	F2: 0.19704
+    	Total predictions: 15000	True positives:  336	False positives:  190	False negatives: 1664	True negatives: 12810
 **DecisionTreeClassifier:**
 
-    Accuracy: 0.82287	Precision: 0.31740	Recall: 0.28550	F1: 0.30061	F2: 0.29136
-    Total predictions: 15000	True positives:  571	False positives: 1228	False negatives: 1429	True negatives: 11772
-**GaussianNB(priors=None):**
+    Accuracy: 0.82153	Precision: 0.32434	Recall: 0.31250	F1: 0.31831	F2: 0.31480
+    	Total predictions: 15000	True positives:  625	False positives: 1302	False negatives: 1375	True negatives: 11698
+**GaussianNB:**
 
-	Accuracy: 0.73900	Precision: 0.22604	Recall: 0.39500	F1: 0.28753	F2: 0.34363
-	Total predictions: 15000	True positives:  790	False positives: 2705	False negatives: 1210	True negatives: 10295
+	Accuracy: 0.83613	Precision: 0.36639	Recall: 0.31400	F1: 0.33818	F2: 0.32324
+		Total predictions: 15000	True positives:  628	False positives: 1086	False negatives: 1372	True negatives: 11914
 
 
-By comparing the results, we found DecisionTreeClassifier performed better across a set of different metrics, like accuracy, precision, and recall. Therefore, we decided to use DecisionTreeClassifier to identify the POI.
+By comparing the results, we found without tuning the paramaters,  GaussianNB and DecisionTreeClassifier performed better across a set of different metrics, like accuracy, precision, and recall. As DecisionTreeClassifier has more potential for tuning and improve performance,  we decided to use DecisionTreeClassifier to identify the POI.
 
 
 
@@ -90,14 +101,15 @@ parameters = {'min_samples_split': [2,4,6,8,10],
              }
 ```
 
-The results of optimized parameters:
+After get the results of optimized parameters from GridsearchCV and addtional manually testing, the final tuned parameters are as follow:
 
 ```python
-        max_features=None, max_leaf_nodes=None,
-        min_impurity_decrease=0.0, min_impurity_split=None,
-        min_samples_leaf=1, min_samples_split=4,
-        min_weight_fraction_leaf=0.0, presort=False, random_state=None,
-        splitter='random')
+class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='random'
 ```
 
 
@@ -115,7 +127,7 @@ Validation consists of a set of techniques to make sure our model based on train
 
 | DecisionTreeClassifier | Precision | Recall  |
 | ---------------------- | --------- | ------- |
-|                        | 0.31740   | 0.28550 |
+|                        | 0.32793   | 0.34400 |
 
 
 

@@ -84,54 +84,44 @@ for name in my_dataset:
     data_point["fraction_to_poi"] = fraction_to_poi
 
 ###update the features_list
-my_feature_list = features_list + ['fraction_from_poi', 'fraction_to_poi']
+features_list = features_list + ['fraction_from_poi', 'fraction_to_poi']
 
 ###get K-best features
-# num_features = 10
-#
-# def get_k_best(data_dict, features_list, k):
-#     """ runs scikit-learn's SelectKBest feature selection
-#         returns dict where keys=features, values=scores
-#     """
-#     data = featureFormat(data_dict, features_list)
-#     labels, features = targetFeatureSplit(data)
-#
-#     k_best = SelectKBest(k=k)
-#     k_best.fit(features, labels)
-#     scores = k_best.scores_
-#     unsorted_pairs = zip(features_list[1:], scores)
-#     sorted_pairs = list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))
-#     k_best_features = dict(sorted_pairs[:k])
-#     print "{0} best features: {1}\n".format(k, k_best_features.keys())
-#     return k_best_features
-#
-#
-# best_features = get_k_best(my_dataset, my_feature_list, num_features)
-#
-# my_feature_list = target_label + best_features.keys()
-#
-# ###print features
-# print "{0} selected features: {1}\n".format(len(my_feature_list) - 1, my_feature_list[1:])
+num_features = 10
+
+def get_k_best(data_dict, features_list, k):
+    """ runs scikit-learn's SelectKBest feature selection
+        returns dict where keys=features, values=scores
+    """
+    data = featureFormat(data_dict, features_list)
+    labels, features = targetFeatureSplit(data)
+
+    k_best = SelectKBest(k=k)
+    k_best.fit(features, labels)
+    scores = k_best.scores_
+    unsorted_pairs = zip(features_list[1:], scores)
+    sorted_pairs = list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))
+    k_best_features = dict(sorted_pairs[:k])
+    print "{0} best features: {1}\n".format(k, k_best_features.keys())
+    return k_best_features
+
+
+best_features = get_k_best(my_dataset, features_list, num_features)
+
+features_list = target_label + best_features.keys()
+
+###print features
+print "{0} selected features: {1}\n".format(len(features_list) - 1, features_list[1:])
 
 ### Extract features and labels from dataset for local testing
-data = featureFormat(my_dataset, my_feature_list, sort_keys = True)
+data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-print "Chosen features:", my_feature_list
+
 
 # Scale features
 scaler = MinMaxScaler()
 features = scaler.fit_transform(features)
-
-
-# K-best features
-k_best = SelectKBest(k=5)
-k_best.fit(features, labels)
-
-k_best_results = zip(my_feature_list[1:], k_best.scores_)
-k_best_results = sorted(k_best_results, key=lambda x: x[1], reverse=True)
-print "K-best features:", k_best_results
-
 
 
 ### Task 4: Try a varity of classifiers
@@ -141,22 +131,32 @@ print "K-best features:", k_best_results
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
 # Provided to give you a starting point. Try a variety of classifiers.
-# from sklearn.naive_bayes import GaussianNB
-# clf = GaussianNB()
+from sklearn.naive_bayes import GaussianNB
+N_clf = GaussianNB()
 
 from sklearn import tree
-clf = tree.DecisionTreeClassifier(max_features=None, max_leaf_nodes=None,
-        min_impurity_decrease=0.0, min_impurity_split=None,
-        min_samples_leaf=1, min_samples_split=4,
-        min_weight_fraction_leaf=0.0, presort=False, random_state=None,
-        splitter='random')
+D_clf = tree.DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='random')
 
-# from sklearn.neighbors import KNeighborsClassifier
-# clf = KNeighborsClassifier(algorithm='auto', leaf_size=5, metric='minkowski', \
-#             metric_params=None, n_neighbors=10, p=3, weights='distance')
+from sklearn.neighbors import KNeighborsClassifier
+K_clf = KNeighborsClassifier()
 
 
-#tune the parameters for decision tress classifier
+
+
+
+### Task 5: Tune your classifier to achieve better than .3 precision and recall
+### using our testing script. Check the tester.py script in the final project
+### folder for details on the evaluation method, especially the test_classifier
+### function. Because of the small size of the dataset, the script uses
+### stratified shuffle split cross validation. For more info:
+### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
+
+#tune the parameters for decision tree classifier
 from sklearn import grid_search
 parameters = {'min_samples_split': [2,4,6,8,10],
               'max_depth':[None, 2,4,6,8,10],
@@ -167,14 +167,11 @@ clf_optimize = grid_search.GridSearchCV(tree.DecisionTreeClassifier(), parameter
 print 'Best estimator:'
 print clf_optimize.best_estimator_
 
-### Task 5: Tune your classifier to achieve better than .3 precision and recall
-### using our testing script. Check the tester.py script in the final project
-### folder for details on the evaluation method, especially the test_classifier
-### function. Because of the small size of the dataset, the script uses
-### stratified shuffle split cross validation. For more info:
-### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
-test_classifier(clf, my_dataset, my_feature_list)
+# for clf in [N_clf, D_clf, K_clf]:
+
+clf = D_clf
+test_classifier(clf, my_dataset, features_list)
 
 # Example starting point. Try investigating other evaluation techniques!
 from sklearn.cross_validation import train_test_split
